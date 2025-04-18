@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: speedtest-pod
+spec:
+  hostNetwork: true # Enable host networking for direct subnet access
+  dnsPolicy: ClusterFirstWithHostNet # Use host's DNS resolution
+  containers:
+  - name: speedtest-container
+    image: debian:latest
+    command: ["/bin/bash", "-c"]
+    args:
+    - |
+      apt-get update && apt-get install -y iproute2 speedtest-cli
+      sleep 5 # Give some time for networking to settle
+      ip a # Display IP addresses (for verification)
+      speedtest-cli
+      sleep 5 # Give some time for logging (if any) before deletion
+      exit 0 # Ensure pod exits cleanly after speedtest
+
+  # Static IP assignment (Requires careful configuration and may not work in all environments)
+  # **WARNING:**  This section requires privileged access to the host network and 
+  # careful coordination to avoid IP conflicts. Misconfiguration can lead to network disruption.
+  # Uncomment and modify the following only if you fully understand the implications.
+
+  # securityContext:
+  #   privileged: true # Required for setting IP addresses manually
+  # initContainers: # To set the IP before the main container starts
+  # - name: ip-setter
+  #   image: busybox:latest
+  #   command: ["/bin/sh", "-c"]
+  #   args:
+  #   - |
+  #     ip addr add 192.168.10.14/24 dev eth0 # Replace with your desired IP and interface
+  #     # Optional: Add a default route if needed
+  #     ip route add default via 192.168.10.1 # Replace with your gateway
+
+
+---
+apiVersion: batch/v1
+kind: Job # Use a Job to ensure the pod is deleted after completion
+metadata:
+  name: speedtest-job
+spec:
+  template:
+    metadata:
+      name: speedtest-pod-template
+    spec:
+      restartPolicy: Never # Only run once
+      containers:
+      - name: speedtest-container
+        image: debian:latest
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          apt-get update && apt-get install -y iproute2 speedtest-cli
+          sleep 5
+          ip a
+          speedtest-cli
+          sleep 5 # Give time for logs
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet 
+      # ... (Optional: securityContext and initContainers for static IP as above)
+  backoffLimit: 0 # Don't retry if it fails
