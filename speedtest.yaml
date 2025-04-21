@@ -3,8 +3,8 @@ kind: Pod
 metadata:
   name: speedtest-pod
 spec:
-  hostNetwork: true # Enable host networking for direct subnet access
-  dnsPolicy: ClusterFirstWithHostNet # Use host's DNS resolution
+  #hostNetwork: true # Enable host networking for direct subnet access
+  #dnsPolicy: ClusterFirstWithHostNet # Use host's DNS resolution
   containers:
   - name: speedtest-container
     image: debian:latest
@@ -58,7 +58,7 @@ spec:
           ip a
           speedtest-cli
           sleep 5 # Give time for logs
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet 
+      #hostNetwork: true
+      #dnsPolicy: ClusterFirstWithHostNet 
       # ... (Optional: securityContext and initContainers for static IP as above)
   backoffLimit: 0 # Don't retry if it fails
