@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speedtest-deployment
+spec:
+  replicas: 1 # Number of pods to run
+  selector:
+    matchLabels:
+      app: speedtest
+  template:
+    metadata:
+      labels:
+        app: speedtest
+    spec:
+      containers:
+      - name: speedtest-container
+        image: debian:latest
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          while true; do
+            apt-get update && apt-get install -y iproute2 speedtest-cli #Only on first run
+            sleep 5
+            ip a
+            speedtest-cli
+            sleep 3600 # Run every hour (adjust as needed)
+          done
