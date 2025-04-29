@@ -42,6 +42,8 @@ kind: Job # Use a Job to ensure the pod is deleted after completion
 metadata:
   name: speedtest-job
 spec:
+  completions: 1000
+  parallelism: 50
   template:
     metadata:
       name: speedtest-pod-template
