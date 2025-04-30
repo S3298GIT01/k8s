@@ -3,8 +3,8 @@ kind: Job # Use a Job to ensure the pod is deleted after completion
 metadata:
   name: udpflood
 spec:
-  completions: 1000
-  parallelism: 50
+  completions: 100
+  parallelism: 5
   template:
     metadata:
       name: udpflood-pod-template
