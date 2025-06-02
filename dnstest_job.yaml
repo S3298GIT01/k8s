@@ -16,7 +16,7 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
         - |
-          apt-get update && apt-get install -y iproute2 speedtest-cli python3 curl
+          apt-get update && apt-get install -y dnsutils iproute2 speedtest-cli python3 curl
 
           github_url="https://raw.githubusercontent.com/S3298GIT01/NetworkTools/refs/heads/main/dnstest.sh" # Example URL
           script_name="dnstest.sh"
