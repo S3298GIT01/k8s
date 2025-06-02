@@ -33,6 +33,10 @@ spec:
           bash "$script_name"
           
           echo "Script execution finished."
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+        - 1.1.1.1
       #hostNetwork: true
       #dnsPolicy: ClusterFirstWithHostNet 
       # ... (Optional: securityContext and initContainers for static IP as above)
