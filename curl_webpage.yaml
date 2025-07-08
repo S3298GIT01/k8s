@@ -19,7 +19,9 @@ spec:
           apt-get update && apt-get install -y iproute2 speedtest-cli curl
           sleep 5
           ip a
-          curl 192.168.2.18
+          while true; do
+            curl -k 192.168.2.18
+          done
           sleep 5 # Give time for logs
       #hostNetwork: true
       #dnsPolicy: ClusterFirstWithHostNet 
