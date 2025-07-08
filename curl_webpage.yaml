@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job # Use a Job to ensure the pod is deleted after completion
+metadata:
+  name: speedtest-job
+spec:
+  completions: 1000
+  parallelism: 50
+  template:
+    metadata:
+      name: speedtest-pod-template
+    spec:
+      restartPolicy: Never # Only run once
+      containers:
+      - name: speedtest-container
+        image: debian:latest
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          apt-get update && apt-get install -y iproute2 speedtest-cli curl
+          sleep 5
+          ip a
+          curl 192.168.2.18
+          sleep 5 # Give time for logs
+      #hostNetwork: true
+      #dnsPolicy: ClusterFirstWithHostNet 
+      # ... (Optional: securityContext and initContainers for static IP as above)
+  backoffLimit: 0 # Don't retry if it fails
